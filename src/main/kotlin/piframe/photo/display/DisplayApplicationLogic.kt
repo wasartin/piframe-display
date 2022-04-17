@@ -61,7 +61,7 @@ class DisplayApplicationLogic : Application() {
         ImageIO.write(rotate, "jpeg", os) // Passing: ​(RenderedImage im, String formatName, OutputStream output)
         val es: InputStream = ByteArrayInputStream(os.toByteArray())
 
-        val stream: InputStream = FileInputStream("/Users/wsartin/temp/photos/derzu_uzala.jpg" )
+        //val stream: InputStream = FileInputStream("/Users/wsartin/temp/photos/derzu_uzala.jpg" )
         val image = Image(es)
         val imageView = ImageView()
         imageView.image = image
