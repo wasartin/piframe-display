@@ -43,3 +43,9 @@ javafx {
 	version = "17.0.1"
 	modules = mutableListOf("javafx.controls", "javafx.fxml")
 }
+
+tasks {
+	bootJar {
+		launchScript()
+	}
+}
