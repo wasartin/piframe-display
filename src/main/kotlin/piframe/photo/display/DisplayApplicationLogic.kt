@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import org.springframework.stereotype.Component
+import org.springframework.util.ResourceUtils
 import java.awt.image.BufferedImage
 import java.io.*
 import javax.annotation.PostConstruct
@@ -55,7 +56,9 @@ class DisplayApplicationLogic : Application() {
     }
 
     override fun start(primaryStage: Stage?) {
-        val buf: BufferedImage = ImageIO.read(File("/Users/wsartin/temp/photos/derzu_uzala.jpg"))
+        val file = ResourceUtils.getFile("classpath:static/posters/derzu_uzala.jpg")
+        val buf: BufferedImage = ImageIO.read(file)
+
         val rotate = rotateClockwise90(buf)
         val os = ByteArrayOutputStream()
         ImageIO.write(rotate, "jpeg", os) // Passing: ​(RenderedImage im, String formatName, OutputStream output)
