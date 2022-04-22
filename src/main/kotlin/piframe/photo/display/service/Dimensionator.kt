@@ -11,7 +11,6 @@ class Dimensionator {
         var height = screenSize.getHeight()
 
         return ScreenSize(width, height)
-
     }
 
 }
