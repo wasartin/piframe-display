@@ -19,9 +19,10 @@ class DisplayApplicationLogic : Application() {
 
     @PostConstruct
     fun run(){
+        // commented out to make sure javafx is in the container
         launch()
     }
-
+ 
     override fun start(primaryStage: Stage?) {
         val file = ResourceUtils.getFile("classpath:static/posters/derzu_uzala.jpg")
         val buf: BufferedImage = ImageIO.read(file)
