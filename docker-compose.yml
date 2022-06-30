@@ -1,0 +1,8 @@
+version: '3.0'
+
+services:
+  displayer:
+    image: amazoncorretto:8
+    container_name: displayer
+    #restart: always
+    build: .
