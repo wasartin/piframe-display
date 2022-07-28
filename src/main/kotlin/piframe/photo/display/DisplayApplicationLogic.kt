@@ -19,7 +19,6 @@ class DisplayApplicationLogic : Application() {
 
     @PostConstruct
     fun run(){
-        // commented out to make sure javafx is in the container
         launch()
     }
  
