@@ -8,15 +8,33 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+//TODO:
+//  - run from given section
+//  - categories of photos in DB?
 public class Displayer extends Window {
 
     private BufferedImage pic;
 
+    // TODO: Add functionality for sleepiung at night.
     public static void main(String[] args) {
-        String directoryFilePath = "/Users/wsartin/Downloads/jpgPosters/";
+        // args: folder location, interval in minutes, repeat (optional)
+        boolean repeat = false;
+        String givenDirectory = "";
+        int intervalInMinutes = 0;
+
+        if(args.length > 0) {
+            givenDirectory = args[1];
+            intervalInMinutes = Integer.parseInt(args[2]);
+            if(args.length == 3) repeat = true;
+        }
+
+        String directoryFilePath = (givenDirectory.length() == 0) ? givenDirectory: "/Users/wsartin/dev/temp/PhotoAlbum/resrc/jpgPosters";
+        long intervalInMilliseconds = TimeUnit.MINUTES.toMillis(intervalInMinutes);
         GraphicsDevice screen = setUp();
         try {
-            showPoster(directoryFilePath, screen);
+            do {
+                showPoster(directoryFilePath, intervalInMilliseconds, screen);
+            } while(repeat);
         } catch(Exception e) {
             System.out.println("IDK");
         }
@@ -33,8 +51,7 @@ public class Displayer extends Window {
         return screen;
     }
 
-    private static void showPoster(String directoryFilePath, GraphicsDevice screen) {
-
+    private static void showPoster(String directoryFilePath, long intervalInMilliseconds, GraphicsDevice screen) {
         try {
             File currentDirectory = new File(directoryFilePath);
             File[] files = currentDirectory.listFiles();
@@ -46,7 +63,8 @@ public class Displayer extends Window {
                     BufferedImage loadedpic2 = ImageIO.read(file);
                     BufferedImage rotated2 = rotate(loadedpic2);
                     screen.setFullScreenWindow(new Displayer(rotated2));
-                    Thread.sleep(2000);
+
+                    Thread.sleep(intervalInMilliseconds);
                 }
             }
         } catch (Exception e) {
