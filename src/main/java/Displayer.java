@@ -18,14 +18,12 @@ public class Displayer extends Window {
     // TODO: Add functionality for sleepiung at night.
     public static void main(String[] args) {
         // args: folder location, interval in minutes, repeat (optional)
-        boolean repeat = false;
         String givenDirectory = "";
-        int intervalInMinutes = 0;
+        long intervalInMinutes = 0;
 
         if(args.length > 0) {
-            givenDirectory = args[1];
-            intervalInMinutes = Integer.parseInt(args[2]);
-            if(args.length == 3) repeat = true;
+            givenDirectory = args[0];
+            intervalInMinutes = Long.parseLong(args[1]);
         }
 
         String directoryFilePath = (givenDirectory.length() == 0) ? givenDirectory: "/Users/wsartin/dev/temp/PhotoAlbum/resrc/jpgPosters";
@@ -34,7 +32,7 @@ public class Displayer extends Window {
         try {
             do {
                 showPoster(directoryFilePath, intervalInMilliseconds, screen);
-            } while(repeat);
+            } while(true);
         } catch(Exception e) {
             System.out.println("IDK");
         }
