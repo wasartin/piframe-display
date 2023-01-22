@@ -55,7 +55,10 @@ public class Displayer extends Window {
             File currentDirectory = new File(directoryFilePath);
             File[] files = currentDirectory.listFiles();
 
-            assert files != null;
+            if(files == null) {
+                throw new Exception("Given a bad directory. Couldn't find any files at: " + currentDirectory);
+            }
+
             for (File file : files) {
                 if (file.isFile() && !file.isHidden()) {
                     System.out.println("FILE: "+ file.toPath());
