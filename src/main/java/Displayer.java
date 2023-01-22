@@ -4,6 +4,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -58,8 +61,10 @@ public class Displayer extends Window {
             if(files == null) {
                 throw new Exception("Given a bad directory. Couldn't find any files at: " + currentDirectory);
             }
+            ArrayList<File> shuffledList = new ArrayList<>(List.of(files));
+            Collections.shuffle(shuffledList);
 
-            for (File file : files) {
+            for (File file : shuffledList) {
                 if (file.isFile() && !file.isHidden()) {
                     System.out.println("FILE: "+ file.toPath());
                     BufferedImage loadedpic2 = ImageIO.read(file);
