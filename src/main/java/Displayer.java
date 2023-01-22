@@ -19,14 +19,15 @@ public class Displayer extends Window {
     public static void main(String[] args) {
         // args: folder location, interval in minutes, repeat (optional)
         String givenDirectory = "";
-        long intervalInMinutes = 0;
-
-        if(args.length > 0) {
+        long intervalInMinutes = 15;
+        System.out.println("START");
+        if(args != null && args.length > 0) {
             givenDirectory = args[0];
             intervalInMinutes = Long.parseLong(args[1]);
+            System.out.println("New intervalInMinutes: " + intervalInMinutes);
         }
 
-        String directoryFilePath = (givenDirectory.length() == 0) ? givenDirectory: "/Users/wsartin/dev/temp/PhotoAlbum/resrc/jpgPosters";
+        String directoryFilePath = (givenDirectory.length() != 0) ? givenDirectory: "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters";
         long intervalInMilliseconds = TimeUnit.MINUTES.toMillis(intervalInMinutes);
         GraphicsDevice screen = setUp();
         try {
@@ -34,7 +35,7 @@ public class Displayer extends Window {
                 showPoster(directoryFilePath, intervalInMilliseconds, screen);
             } while(true);
         } catch(Exception e) {
-            System.out.println("IDK");
+            System.out.println("What the hell is going on here?");
         }
     }
 
