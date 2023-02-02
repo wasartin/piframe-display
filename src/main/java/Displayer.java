@@ -3,18 +3,25 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
+
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //TODO:
 //  - run from given section
 //  - categories of photos in DB?
 public class Displayer extends Window {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Displayer.class);
 
     private BufferedImage pic;
 
@@ -23,14 +30,15 @@ public class Displayer extends Window {
         // args: folder location, interval in minutes, repeat (optional)
         String givenDirectory = "";
         long intervalInMinutes = 15;
-        System.out.println("START");
+
+        LOGGER.info(String.format("Startup: %s", LocalDateTime.now()));
         if(args != null && args.length > 0) {
             givenDirectory = args[0];
             intervalInMinutes = Long.parseLong(args[1]);
-            System.out.println("New intervalInMinutes: " + intervalInMinutes);
         }
 
         String directoryFilePath = (givenDirectory.length() != 0) ? givenDirectory: "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters";
+        LOGGER.info(String.format("Image Directory: %s, Interval in Minutes: %d", givenDirectory, intervalInMinutes));
         long intervalInMilliseconds = TimeUnit.MINUTES.toMillis(intervalInMinutes);
         GraphicsDevice screen = setUp();
         try {
@@ -38,7 +46,7 @@ public class Displayer extends Window {
                 showPoster(directoryFilePath, intervalInMilliseconds, screen);
             } while(true);
         } catch(Exception e) {
-            System.out.println("What the hell is going on here?");
+            LOGGER.error(String.format("Ended at: %s", LocalDateTime.now()));
         }
     }
 
@@ -47,7 +55,7 @@ public class Displayer extends Window {
         GraphicsDevice screen = ge.getDefaultScreenDevice();
 
         if (!screen.isFullScreenSupported()) {
-            System.out.println("Full screen mode not supported");
+            LOGGER.error("Full Screen is not supported");
             System.exit(1);
         }
         return screen;
@@ -59,14 +67,15 @@ public class Displayer extends Window {
             File[] files = currentDirectory.listFiles();
 
             if(files == null) {
-                throw new Exception("Given a bad directory. Couldn't find any files at: " + currentDirectory);
+                LOGGER.error("Given a bad directory. Couldn't find any files at: " + currentDirectory);
+                throw new Exception();
             }
             ArrayList<File> shuffledList = new ArrayList<>(List.of(files));
             Collections.shuffle(shuffledList);
 
             for (File file : shuffledList) {
                 if (file.isFile() && !file.isHidden()) {
-                    System.out.println("FILE: "+ file.toPath());
+                    LOGGER.info(String.format("Displaying %s", file.toPath()));
                     BufferedImage loadedpic2 = ImageIO.read(file);
                     BufferedImage rotated2 = rotate(loadedpic2);
                     screen.setFullScreenWindow(new Displayer(rotated2));
@@ -75,7 +84,7 @@ public class Displayer extends Window {
                 }
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
     }
 
