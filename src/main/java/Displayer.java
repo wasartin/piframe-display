@@ -1,3 +1,5 @@
+import model.Album;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,16 +13,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
-//TODO:
-//  - run from given section
-//  - categories of photos in DB?
 public class Displayer extends Window {
 
     private BufferedImage pic;
+    private static Album photoAlbum;
+    private static boolean keepRunning = true;
 
-    // TODO: Add functionality for sleepiung at night.
-    public static void main(String[] args) {
-        // args: folder location, interval in minutes, repeat (optional)
+    //private static ArrayList<File> shuffledDirectory;
+
+    public static void main(String[] args) throws Exception {
+        // args: folder location, interval in minute
         String givenDirectory = "";
         long intervalInMinutes = 15;
         System.out.println("START");
@@ -31,12 +33,13 @@ public class Displayer extends Window {
         }
 
         String directoryFilePath = (givenDirectory.length() != 0) ? givenDirectory: "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters";
+        photoAlbum = new Album(directoryFilePath);
         long intervalInMilliseconds = TimeUnit.MINUTES.toMillis(intervalInMinutes);
         GraphicsDevice screen = setUp();
         try {
             do {
-                showPoster(directoryFilePath, intervalInMilliseconds, screen);
-            } while(true);
+                showPoster(intervalInMilliseconds, screen);
+            } while(keepRunning);
         } catch(Exception e) {
             System.out.println("What the hell is going on here?");
         }
@@ -53,27 +56,16 @@ public class Displayer extends Window {
         return screen;
     }
 
-    private static void showPoster(String directoryFilePath, long intervalInMilliseconds, GraphicsDevice screen) {
+    // can this be made into a thread? and when I have to force forward or backward,
+    // can I then kill the thread and make a new one.
+    private static void showPoster(long intervalInMilliseconds, GraphicsDevice screen) {
         try {
-            File currentDirectory = new File(directoryFilePath);
-            File[] files = currentDirectory.listFiles();
-
-            if(files == null) {
-                throw new Exception("Given a bad directory. Couldn't find any files at: " + currentDirectory);
-            }
-            ArrayList<File> shuffledList = new ArrayList<>(List.of(files));
-            Collections.shuffle(shuffledList);
-
-            for (File file : shuffledList) {
-                if (file.isFile() && !file.isHidden()) {
-                    System.out.println("FILE: "+ file.toPath());
-                    BufferedImage loadedpic2 = ImageIO.read(file);
-                    BufferedImage rotated2 = rotate(loadedpic2);
-                    screen.setFullScreenWindow(new Displayer(rotated2));
-
-                    Thread.sleep(intervalInMilliseconds);
-                }
-            }
+            File currentPhoto = photoAlbum.next();
+            System.out.println("FILE: "+ currentPhoto.toPath());
+            BufferedImage image = ImageIO.read(currentPhoto);
+            BufferedImage rotatedImage = rotate(image);
+            screen.setFullScreenWindow(new Displayer(rotatedImage));
+            Thread.sleep(intervalInMilliseconds);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -86,7 +78,18 @@ public class Displayer extends Window {
 
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                exitApplication();
+                if(e.getButton()== MouseEvent.BUTTON1) { //Left
+                    // go back
+                    System.out.println("Go back");
+                    exitApplication();
+                } else if(e.getButton() == MouseEvent.BUTTON2){ // Right
+                    // go forward
+                    // skip photo
+                    System.out.println("Skip");
+                } else if(e.getButton() == MouseEvent.BUTTON3) { // Middle
+                    System.out.println("Exit");
+                    keepRunning = false;
+                }
             }
         });
     }
@@ -94,8 +97,6 @@ public class Displayer extends Window {
     public void paint(Graphics g) {
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-        // Draw the image
         g.drawImage(pic, 0, 0, getWidth(), getHeight(), this);
     }
 
