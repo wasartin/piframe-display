@@ -7,19 +7,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.imageio.ImageIO;
 
 public class Displayer extends Window {
 
-    private BufferedImage pic; // Do I actually need this thing at all?
-    private static Album photoAlbum; // Could pass in
-    private static boolean keepRunning = true; // Don't really need this when running correctly
-    private static boolean displayCurrentPoster = true; // Keep
-
-    int counter = 0; // TODO: Delete
+    private BufferedImage pic;
+    private static Album photoAlbum;
+    private static boolean displayCurrentPoster = true;
 
     public static void main(String[] args) throws Exception {
         System.out.println("Startup");
@@ -39,7 +34,7 @@ public class Displayer extends Window {
 
     private static void run(int intervalInMinutes, GraphicsDevice screen){
         try {
-            do {
+            while(true) {
                 displayCurrentPoster = true;
                 LocalTime startTime = LocalTime.now();
                 LocalTime endTime = startTime.plusMinutes(intervalInMinutes);
@@ -50,7 +45,7 @@ public class Displayer extends Window {
                         displayCurrentPoster = false;
                     }
                 }
-            } while(keepRunning);
+            }
         } catch(Exception e) {
             System.out.println("What the hell is going on here?");
         }
@@ -70,6 +65,7 @@ public class Displayer extends Window {
             System.err.println(e.getMessage());
         }
     }
+
     public Displayer(BufferedImage pic) {
         super(new Frame());
 
@@ -77,23 +73,10 @@ public class Displayer extends Window {
 
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-
                 if(e.getButton()== MouseEvent.BUTTON1) { //Left
-                    // go back
-                    counter++;
-                    if(counter > 2){
-                        keepRunning = false;
-                        System.out.println("Go back");
-                        exitApplication();
-                    }
-                    displayCurrentPoster = false;
+                    exitApplication();
                 } else if(e.getButton() == MouseEvent.BUTTON2){ // Right
-                    // go forward
-                    // skip photo
-                    System.out.println("Skip");
-                } else if(e.getButton() == MouseEvent.BUTTON3) { // Middle
-                    System.out.println("Exit");
-                    keepRunning = false;
+                    displayCurrentPoster = false;
                 }
             }
         });
