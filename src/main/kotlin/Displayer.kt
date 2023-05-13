@@ -17,7 +17,7 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
             override fun mouseClicked(e: MouseEvent) {
                 if (e.button == MouseEvent.BUTTON1) { //Left
                     exitProcess(0)
-                } else if (e.button == MouseEvent.BUTTON2) { // Right
+                } else if (e.button == MouseEvent.BUTTON3) { // Right
                     displayCurrentPoster = false
                 }
             }
