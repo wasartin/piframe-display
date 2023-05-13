@@ -1,2 +1,3 @@
-rootProject.name = 'PhotoAlbum'
-
+rootProject.name = 'photo-album'
+include("Album")
+include("Displayer")
