@@ -37,7 +37,8 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
         @JvmStatic
         fun main(args: Array<String>) {
             println("Startup")
-            var directoryFilePath = "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters"
+            // var directoryFilePath = "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters"
+            var directoryFilePath = "/home/piframe/dev/photo-db/posters/jpg/"
             var intervalInMinutes = 15
             if (args.isNotEmpty()) {
                 directoryFilePath = args[0]
