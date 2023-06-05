@@ -7,6 +7,9 @@ class Album(directory: String?) {
     private val shuffledDirectory = ArrayList<File?>()
     private var index = 0
 
+    // Debugging memory issue
+    private var fullCycle = 1
+
     init {
         val currentDirectory = File(directory)
         val files = currentDirectory.listFiles { pathname: File ->
@@ -21,6 +24,8 @@ class Album(directory: String?) {
         if (index >= shuffledDirectory.size) {
             shuffledDirectory.shuffle()
             index = 0
+            println("Full cycles: ${fullCycle}, reshuffling images")
+            fullCycle++
         }
         return shuffledDirectory[index++]
     }

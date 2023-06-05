@@ -31,13 +31,18 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
     }
 
     companion object {
+
+        // Debugging current memory issue
+        private var imageIteration = 0
+
         private var photoAlbum: Album? = null
         private var displayCurrentPoster = true
+
         @Throws(Exception::class)
         @JvmStatic
         fun main(args: Array<String>) {
             println("Startup")
-            // var directoryFilePath = "/Users/wsartin/dev/workshop/PhotoAlbum/resrc/jpgPosters"
+            //var directoryFilePath = "/Users/wsartin/dev/workshop/photo-album/resrc/jpgPosters"
             var directoryFilePath = "/home/piframe/dev/photo-db/posters/jpg/"
             var intervalInMinutes = 15
             if (args.isNotEmpty()) {
@@ -72,7 +77,8 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
         private fun showPoster(screen: GraphicsDevice) {
             screen.fullScreenWindow = null
             val currentPhoto: File = photoAlbum!!.next()!!
-            println("FILE: " + currentPhoto.toPath())
+            println("Counter: ${imageIteration}, Current Image: " + currentPhoto.toPath())
+            imageIteration++
             val image = ImageIO.read(currentPhoto)
             val rotatedImage = rotate(image)
             screen.fullScreenWindow = Displayer(rotatedImage)
