@@ -1,10 +1,12 @@
 package model
 
 import java.io.File
+import java.io.FilenameFilter
 import java.util.*
 
 class Album(directory: String?) {
-    private val shuffledDirectory = ArrayList<File?>()
+    //private val shuffledDirectory = ArrayList<File?>()
+    private val shuffledDirectory = ArrayList<String>()
     private var index = 0
 
     // Debugging memory issue
@@ -12,15 +14,23 @@ class Album(directory: String?) {
 
     init {
         val currentDirectory = File(directory)
-        val files = currentDirectory.listFiles { pathname: File ->
-            val extension = pathname.name.lowercase(Locale.getDefault())
-            extension.endsWith(".jpg") || extension.endsWith(".jpeg") || extension.endsWith(".png")
-        } ?: throw Exception("Given a bad directory. Couldn't find any files at: $currentDirectory")
-        shuffledDirectory.addAll(listOf(*files))
+        val files = currentDirectory.listFiles()
+        val filesNames:MutableList<String> = mutableListOf()
+        files?.map{
+            if(validImage(it)) {
+                filesNames.add(it!!.absolutePath)
+            }
+        }
+        shuffledDirectory.addAll(filesNames)
         shuffledDirectory.shuffle()
     }
 
-    operator fun next(): File? {
+    private fun validImage(filename: File): Boolean {
+        val extension = filename.name.lowercase(Locale.getDefault())
+        return extension.endsWith(".jpg") || extension.endsWith(".jpeg") || extension.endsWith(".png")
+    }
+
+    operator fun next(): String {
         if (index >= shuffledDirectory.size) {
             shuffledDirectory.shuffle()
             index = 0
@@ -30,7 +40,7 @@ class Album(directory: String?) {
         return shuffledDirectory[index++]
     }
 
-    fun previous(): File? {
+    fun previous(): String {
         index--
         if (index < 0) {
             index = 0

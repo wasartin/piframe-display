@@ -1,13 +1,12 @@
 import model.Album
+import service.ImageManipulation
 
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
 import java.time.LocalTime
-import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 class Displayer(private val pic: BufferedImage) : Window(Frame()) {
@@ -31,7 +30,6 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
     }
 
     companion object {
-
         // Debugging current memory issue
         private var imageIteration = 0
 
@@ -42,8 +40,9 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
         @JvmStatic
         fun main(args: Array<String>) {
             println("Startup")
-            //var directoryFilePath = "/Users/wsartin/dev/workshop/photo-album/resrc/jpgPosters"
-            var directoryFilePath = "/home/piframe/dev/photo-db/posters/jpg/"
+            //var directoryFilePath = "/Users/wsartin/dev/workshop/piframe-display/resrc/jpgPosters"
+            //var directoryFilePath = "/home/piframe/dev/photo-db/posters/jpg/"
+            var directoryFilePath = "/Users/wsartin/dev/workshop/photo-db/posters/jpg"
             var intervalInMinutes = 15
             if (args.isNotEmpty()) {
                 directoryFilePath = args[0]
@@ -71,41 +70,26 @@ class Displayer(private val pic: BufferedImage) : Window(Frame()) {
                 }
             } catch (e: Exception) {
                 println("What the hell is going on here?")
+                println(e)
             }
         }
 
         private fun showPoster(screen: GraphicsDevice) {
-            screen.fullScreenWindow = null
-            val currentPhoto: File = photoAlbum!!.next()!!
-            println("Counter: ${imageIteration}, Current Image: " + currentPhoto.toPath())
+            val currentImage = File(photoAlbum!!.next())
+            println("Counter: ${imageIteration}, Current Image: " + currentImage.toPath())
             imageIteration++
-            val image = ImageIO.read(currentPhoto)
-            val rotatedImage = rotate(image)
+            val rotatedImage = ImageManipulation().rotateImage(currentImage)
             screen.fullScreenWindow = Displayer(rotatedImage)
         }
 
-        private fun rotate(image: BufferedImage): BufferedImage {
-            val width = image.width
-            val height = image.height
-            val newImage = BufferedImage(height, width, image.type)
-            val g = newImage.createGraphics()
-            val at = AffineTransform()
-            at.translate(((height - width) / 2).toDouble(), ((height - width) / 2).toDouble())
-            at.rotate(Math.toRadians(90.0), (height / 2).toDouble(), (width / 2).toDouble())
-            g.transform = at
-            g.drawImage(image, 0, 0, null)
-            g.dispose()
-            return newImage
-        }
-
         private fun setUp(): GraphicsDevice {
-            val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            val screen = ge.defaultScreenDevice
-            if (!screen.isFullScreenSupported) {
+            val graphicEnv = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            val mainScreen = graphicEnv.defaultScreenDevice
+            if (!mainScreen.isFullScreenSupported) {
                 println("Full screen mode not supported")
-                System.exit(1)
+                exitProcess(1)
             }
-            return screen
+            return mainScreen
         }
     }
 }
